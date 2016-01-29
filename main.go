@@ -7,7 +7,7 @@ import (
 	"github.com/tommyvicananza/go-dockerclient"
 )
 
-type molinaStat struct {
+type dockerStat struct {
 	CPUPercent float64
 	MemPercent float64
 	MemUsage   uint64
@@ -18,24 +18,24 @@ type molinaStat struct {
 	BlockWrite uint64
 }
 
-type molinaStats map[string]*molinaStat
+type dockerStats map[string]*dockerStat
 
 func main() {
 	var (
 		previousCPU, previousSystem uint64
 		preCPUStats, stats          docker.Stats
-		mstats                      molinaStats
+		mstats                      dockerStats
 	)
 	client, _ := docker.NewClientFromEnv()
 	containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
-	mstats = make(map[string]*molinaStat)
+	mstats = make(map[string]*dockerStat)
 	for _, container := range containers {
 		preCPUStats, _ = client.StatsStatic(container.ID)
 		previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
 		previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 		stats, _ = client.StatsStatic(container.ID)
 
-		mstats[container.ID] = &molinaStat{}
+		mstats[container.ID] = &dockerStat{}
 		mstats[container.ID].CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
 		mstats[container.ID].MemPercent = calculateMemPercent(&stats)
 		mstats[container.ID].MemUsage = stats.MemoryStats.Usage
