@@ -1,6 +1,7 @@
 package dockerstats
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -38,6 +39,8 @@ func (input *DockerStatsInput) Stop() {
 func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 	helper pipeline.PluginHelper) error {
 
+	fmt.Printf("Run")
+
 	var pack *pipeline.PipelinePack
 
 	input.runner = runner
@@ -60,6 +63,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
 
 		for _, container := range containers {
+			fmt.Printf("Input Run: ahí me meto")
 			pack = <-packSupply
 			pack.Message.SetUuid(uuid.NewRandom())
 			pack.Message.SetTimestamp(time.Now().UnixNano())
