@@ -118,7 +118,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 }
 
 func init() {
-	pipeline.RegisterPlugin("DockerStats", func() interface{} {
+	pipeline.RegisterPlugin("DockerStatsInput", func() interface{} {
 		return new(DockerStatsInput)
 	})
 }
