@@ -73,8 +73,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 
 			//container.Names, mstats[container.ID].CPUPercent, mstats[container.ID].MemUsage, mstats[container.ID].MemLimit,
 			//mstats[container.ID].MemPercent, mstats[container.ID].NetworkRx, mstats[container.ID].NetworkTx, mstats[container.ID].BlockRead, mstats[container.ID].BlockWrite
-			cID, _ := client.StatsStatic(container.ID)
-			containerID, _ := message.NewField("ContainerId", string(cID), "")
+			containerID, _ := message.NewField("ContainerId", string(containerID), "")
 			pack.Message.AddField(containerID)
 
 			cpuPercent, _ := message.NewField("CPUPercent", calculateCPUPercent(previousCPU, previousSystem, &stats), "")
@@ -86,7 +85,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			memUsage, _ := message.NewField("MemUsage", string(stats.MemoryStats.Usage), "")
 			pack.Message.AddField(memUsage)
 
-			memPercent, _ := message.NewField("MemPercent", string(calculateMemPercent(&stats)), "")
+			memPercent, _ := message.NewField("MemPercent", calculateMemPercent(&stats), "")
 			pack.Message.AddField(memPercent)
 
 			for _, networkstat := range stats.Networks {
