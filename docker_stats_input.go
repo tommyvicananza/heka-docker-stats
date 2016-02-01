@@ -109,6 +109,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			blockWrite, _ := message.NewField("BlockWrite", string(bw), "")
 			pack.Message.AddField(blockWrite)
 
+			fmt.Printf(pack.GetPayload())
+
 			//mstats[container.ID] = &dockerStat{}
 			//mstats[container.ID].CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
 			//mstats[container.ID].MemPercent = calculateMemPercent(&stats)
