@@ -2,6 +2,7 @@ package dockerstats
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -80,7 +81,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			containerID, _ := message.NewField("ContainerId", string(container.ID), "")
 			pack.Message.AddField(containerID)
 
-			cpuPercent, _ := message.NewField("CPUPercent", calculateCPUPercent(previousCPU, previousSystem, &stats), "")
+			c := strconv.FormatFloat(calculateCPUPercent(previousCPU, previousSystem, &stats), 'f', 6, 64)
+			cpuPercent, _ := message.NewField("CPUPercent", c, "")
 			pack.Message.AddField(cpuPercent)
 
 			memLimit, _ := message.NewField("MemLimit", string(stats.MemoryStats.Limit), "")
@@ -89,7 +91,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			memUsage, _ := message.NewField("MemUsage", string(stats.MemoryStats.Usage), "")
 			pack.Message.AddField(memUsage)
 
-			memPercent, _ := message.NewField("MemPercent", calculateMemPercent(&stats), "")
+			m := strconv.FormatFloat(calculateMemPercent(&stats), 'f', 6, 64)
+			memPercent, _ := message.NewField("MemPercent", m, "")
 			pack.Message.AddField(memPercent)
 
 			for _, networkstat := range stats.Networks {
