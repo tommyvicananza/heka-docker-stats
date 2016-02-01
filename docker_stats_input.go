@@ -26,7 +26,7 @@ func (input *DockerStatsInput) ConfigStruct() interface{} {
 	}
 }
 func (input *DockerStatsInput) Init(config interface{}) error {
-	input.DockerStatsConfig = config.(*DockerStatsInputConfig)
+	input.DockerStatsInputConfig = config.(*DockerStatsInputConfig)
 	input.stop = make(chan bool)
 	return nil
 }
@@ -55,7 +55,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		var (
 			previousCPU, previousSystem uint64
 			preCPUStats, stats          docker.Stats
-			mstats                      dockerStats
 		)
 		client, _ := docker.NewClientFromEnv()
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
@@ -78,7 +77,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			containerID, _ := message.NewField("ContainerId", string(client.StatsStatic(container.ID)), "")
 			pack.Message.AddField(containerID)
 
-			cpuPercent, _ := message.NewField("CPUPercent", string(calculateCPUPercent(previousCPU, previousSystem, &stats)), "")
+			cpuPercent, _ := message.NewField("CPUPercent", calculateCPUPercent(previousCPU, previousSystem, &stats), "")
 			pack.Message.AddField(cpuPercent)
 
 			memLimit, _ := message.NewField("MemLimit", string(stats.MemoryStats.Limit), "")
@@ -97,7 +96,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				networkTx, _ := message.NewField("NetworkRx", string(networkstat.TxBytes), "")
 				pack.Message.AddField(networkTx)
 			}
-			br, bw = calculateBlockIO(stats)
+			br, bw := calculateBlockIO(stats)
 			blockRead, _ := message.NewField("BlockRead", string(br), "")
 			pack.Message.AddField(blockRead)
 
