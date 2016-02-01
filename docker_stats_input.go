@@ -15,7 +15,7 @@ type DockerStatsInputConfig struct {
 }
 
 type DockerStatsInput struct {
-	stats  *DockerStatsInputConfig
+	*DockerStatsInputConfig
 	stop   chan bool
 	runner pipeline.InputRunner
 }
