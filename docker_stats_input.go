@@ -2,9 +2,6 @@ package dockerstats
 
 import (
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 
@@ -161,73 +158,4 @@ func calculateMemPercent(stats *docker.Stats) float64 {
 		memPercent = float64(stats.MemoryStats.Usage) / float64(stats.MemoryStats.Limit) * 100.0
 	}
 	return memPercent
-}
-
-func (input *DockerMetricsInput) Run(runner pipeline.InputRunner,
-	helper pipeline.PluginHelper) error {
-
-	var pack *pipeline.PipelinePack
-
-	input.runner = runner
-	packSupply := runner.InChan()
-	tickChan := runner.Ticker()
-
-	hostname := helper.PipelineConfig().Hostname()
-	containerIdRegex, _ := regexp.Compile("/docker-([a-z0-9]+)\\.scope/")
-	containerNameRegex, _ := regexp.Compile("\"Name\":\"/([^\"]+)\"")
-
-	for {
-		select {
-		case <-input.stop:
-			return nil
-		case <-tickChan:
-		}
-
-		basePath := "/sys/fs/cgroup/" + string(input.dir) + "/system.slice"
-		files, _ := filepath.Glob(basePath + "/docker-*.scope/" + input.files)
-
-		for _, file := range files {
-			data, err := ioutil.ReadFile(file)
-			if err != nil {
-				runner.LogError(err)
-				continue
-			}
-
-			pack = <-packSupply
-			pack.Message.SetUuid(uuid.NewRandom())
-			pack.Message.SetTimestamp(time.Now().UnixNano())
-			pack.Message.SetType("docker.metrics")
-			pack.Message.SetHostname(hostname)
-			pack.Message.SetPayload(string(data))
-
-			metrics, _ := message.NewField("MetricsType", string(input.MetricsType), "")
-			pack.Message.AddField(metrics)
-
-			containerIdMatches := containerIdRegex.FindSubmatch([]byte(file))
-			if len(containerIdMatches) != 2 {
-				runner.LogError(fmt.Errorf("cannot find container ID"))
-				continue
-			}
-
-			containerId := string(containerIdMatches[1])
-			field, _ := message.NewField("ContainerId", containerId, "")
-			pack.Message.AddField(field)
-
-			containerConfig, err := ioutil.ReadFile("/var/lib/docker/containers/" + containerId + "/config.json")
-			if err == nil {
-				containerNameMatches := containerNameRegex.FindSubmatch([]byte(containerConfig))
-				if len(containerNameMatches) == 2 {
-					containerName := string(containerNameMatches[1])
-
-					field, _ := message.NewField("ContainerName", containerName, "")
-					pack.Message.AddField(field)
-
-				}
-			}
-
-			runner.Deliver(pack)
-		}
-	}
-
-	return nil
 }
