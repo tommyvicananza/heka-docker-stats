@@ -25,8 +25,8 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 	return
 }
 
-func (*DockerMetricsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
-	var metrics = make(map[string]string)
+func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
+	var stats = make(map[string]string)
 
 	reader := bufio.NewReader(strings.NewReader(pack.Message.GetPayload()))
 	for {
@@ -37,10 +37,10 @@ func (*DockerMetricsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 
 		fields := strings.Split(string(data), " ")
 
-		metrics[fields[0]] = fields[1]
+		stats[fields[0]] = fields[1]
 	}
 
-	json, _ := json.Marshal(metrics)
+	json, _ := json.Marshal(stats)
 	return *bytes.NewBuffer(json)
 }
 
