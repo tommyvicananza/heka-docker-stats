@@ -61,7 +61,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		)
 		client, _ := docker.NewClientFromEnv()
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
-
+		fmt.Printf("Input Run: ahí antes de meterme")
 		for _, container := range containers {
 			fmt.Printf("Input Run: ahí me meto")
 			pack = <-packSupply
