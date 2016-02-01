@@ -58,14 +58,13 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		)
 		client, _ := docker.NewClientFromEnv()
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
-		mstats = make(map[string]*dockerStat)
+
 		for _, container := range containers {
 			pack = <-packSupply
 			pack.Message.SetUuid(uuid.NewRandom())
 			pack.Message.SetTimestamp(time.Now().UnixNano())
 			pack.Message.SetType("docker.metrics")
 			pack.Message.SetHostname(hostname)
-			pack.Message.SetPayload(string(data))
 
 			preCPUStats, _ = client.StatsStatic(container.ID)
 			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
@@ -74,7 +73,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 
 			//container.Names, mstats[container.ID].CPUPercent, mstats[container.ID].MemUsage, mstats[container.ID].MemLimit,
 			//mstats[container.ID].MemPercent, mstats[container.ID].NetworkRx, mstats[container.ID].NetworkTx, mstats[container.ID].BlockRead, mstats[container.ID].BlockWrite
-			containerID, _ := message.NewField("ContainerId", string(client.StatsStatic(container.ID)), "")
+			cID, _ := client.StatsStatic(container.ID)
+			containerID, _ := message.NewField("ContainerId", string(cID), "")
 			pack.Message.AddField(containerID)
 
 			cpuPercent, _ := message.NewField("CPUPercent", calculateCPUPercent(previousCPU, previousSystem, &stats), "")
@@ -147,4 +147,12 @@ func calculateBlockIO(stats docker.Stats) (blkRead uint64, blkWrite uint64) {
 		}
 	}
 	return
+}
+
+func calculateMemPercent(stats *docker.Stats) float64 {
+	var memPercent = 0.0
+	if stats.MemoryStats.Limit != 0 {
+		memPercent = float64(stats.MemoryStats.Usage) / float64(stats.MemoryStats.Limit) * 100.0
+	}
+	return memPercent
 }
