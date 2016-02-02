@@ -19,12 +19,11 @@ func (input *DockerStatsDecoder) Init(config interface{}) error {
 }
 
 func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*pipeline.PipelinePack, err error) {
-	fmt.Println(pack.Message.GetPayload())
 	var buf bytes.Buffer
-
+	fmt.Printf("Antes de hacer el buf %s\n", pack.Message.GetPayload())
 	buf = input.decode(pack)
 	pack.Message.SetPayload(string(buf.Bytes()))
-	fmt.Println(pack.Message.GetPayload())
+	fmt.Printf("Despues de hacer el buf %s\n", pack.Message.GetPayload())
 	packs = []*pipeline.PipelinePack{pack}
 	return
 }
