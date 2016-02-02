@@ -105,7 +105,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			} else {
 				con, _ := client.InspectContainer(container.ID)
 				for _, value := range con.Config.Env {
-					parts := strings.SplitN(values, "=", 2)
+					parts := strings.SplitN(value, "=", 2)
 					if len(parts) == 2 {
 						if input.NameFromEnv == parts[0] {
 							container_name = input.NameFromEnv
