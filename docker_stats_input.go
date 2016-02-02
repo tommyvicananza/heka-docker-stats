@@ -98,11 +98,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				mstats.NetworkRx = networkstat.RxBytes
 				mstats.NetworkTx = networkstat.TxBytes
 			}
-			if input.NameFromEnv == "" {
-				if len(container.Names) >= 1 {
-					container_name = strings.Replace(container.Names[0], "/", "", -1)
-				}
-			} else {
+			container_name = strings.Replace(container.Names[0], "/", "", -1)
+			if input.NameFromEnv != "" {
 				con, _ := client.InspectContainer(container.ID)
 				for _, value := range con.Config.Env {
 					parts := strings.SplitN(value, "=", 2)
@@ -112,11 +109,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 						fmt.Printf("part1: %s\n", parts[1])
 						if input.NameFromEnv == parts[0] {
 							container_name = parts[1]
-						} else {
-							container_name = strings.Replace(container.Names[0], "/", "", -1)
+							break
 						}
-					} else {
-						container_name = strings.Replace(container.Names[0], "/", "", -1)
 					}
 				}
 			}
