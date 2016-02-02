@@ -45,8 +45,8 @@ func (input *DockerStatsInput) Init(config interface{}) error {
 }
 
 func (input *DockerStatsInput) Stop() {
-	fmt.Println("Parando...")
 	close(input.stop)
+	fmt.Println("Parado")
 }
 
 func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
