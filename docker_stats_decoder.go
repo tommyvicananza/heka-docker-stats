@@ -42,8 +42,6 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 
 		stats[fields[0]] = fields[1]
 	}
-
-	fmt.Println("hola")
 	json, _ := json.Marshal(stats)
 	return *bytes.NewBuffer(json)
 }
