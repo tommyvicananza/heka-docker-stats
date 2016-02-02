@@ -87,8 +87,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 			stats, _ = client.StatsStatic(container.ID)
 
-			fmt.Printf("Container%s\tCPU: %.2f\tMEM USAGE / LIMIT: %d / %d\tMEM: %.2f\tNET I/O: %d / %d\tBLOCK I/O: %d, %d\n", container.Names, mstats[container.ID].CPUPercent, mstats[container.ID].MemUsage, mstats[container.ID].MemLimit, mstats[container.ID].MemPercent, mstats[container.ID].NetworkRx, mstats[container.ID].NetworkTx, mstats[container.ID].BlockRead, mstats[container.ID].BlockWrite)
-
 			//container.Names, mstats[container.ID].CPUPercent, mstats[container.ID].MemUsage, mstats[container.ID].MemLimit,
 			//mstats[container.ID].MemPercent, mstats[container.ID].NetworkRx, mstats[container.ID].NetworkTx, mstats[container.ID].BlockRead, mstats[container.ID].BlockWrite
 			containerID, _ := message.NewField("ContainerId", string(container.ID), "")
