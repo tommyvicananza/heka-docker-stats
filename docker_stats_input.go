@@ -68,7 +68,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		}
 		var (
 			previousCPU, previousSystem uint64
-			mstats                      dockerStats
+			mstats                      dockerStat
 			preCPUStats, stats          docker.Stats
 		)
 		client, _ := docker.NewClientFromEnv()
@@ -122,12 +122,12 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			//blockWrite, _ := message.NewField("BlockWrite", string(bw), "")
 			//pack.Message.AddField(blockWrite)
 
-			mstats[container.ID] = &dockerStat{}
-			mstats[container.ID].CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
-			mstats[container.ID].MemPercent = calculateMemPercent(&stats)
-			mstats[container.ID].MemUsage = stats.MemoryStats.Usage
-			mstats[container.ID].MemLimit = stats.MemoryStats.Limit
-			mstats[container.ID].BlockRead, mstats[container.ID].BlockWrite = calculateBlockIO(stats)
+			mstats = &dockerStat{}
+			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
+			mstats.MemPercent = calculateMemPercent(&stats)
+			mstats.MemUsage = stats.MemoryStats.Usage
+			mstats.MemLimit = stats.MemoryStats.Limit
+			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
 			pack.Message.SetPayload(fmt.Sprintf("Container%s\tCPU: %.2f\tMEM USAGE / LIMIT: %d / %d\tMEM: %.2f\tNET I/O: %d / %d\tBLOCK I/O: %d, %d\n", container.Names, mstats[container.ID].CPUPercent, mstats[container.ID].MemUsage, mstats[container.ID].MemLimit, mstats[container.ID].MemPercent, mstats[container.ID].NetworkRx, mstats[container.ID].NetworkTx, mstats[container.ID].BlockRead, mstats[container.ID].BlockWrite))
 			runner.Deliver(pack)
 		}
