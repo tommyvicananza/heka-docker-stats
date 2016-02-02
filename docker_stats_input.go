@@ -50,8 +50,6 @@ func (input *DockerStatsInput) Stop() {
 func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 	helper pipeline.PluginHelper) error {
 
-	fmt.Printf("Run")
-
 	var pack *pipeline.PipelinePack
 
 	input.runner = runner
@@ -73,9 +71,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		)
 		client, _ := docker.NewClientFromEnv()
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
-		fmt.Printf("Input Run: ahí antes de meterme, %d", len(containers))
 		for _, container := range containers {
-			fmt.Printf("Input Run: ahí me meto")
 			pack = <-packSupply
 			pack.Message.SetUuid(uuid.NewRandom())
 			pack.Message.SetTimestamp(time.Now().UnixNano())

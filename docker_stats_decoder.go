@@ -15,24 +15,21 @@ type DockerStatsDecoder struct {
 }
 
 func (input *DockerStatsDecoder) Init(config interface{}) error {
-	fmt.Printf("Decoder Init")
 	return nil
 }
 
 func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*pipeline.PipelinePack, err error) {
-	fmt.Printf(pack.Message.GetPayload())
+	fmt.Println(pack.Message.GetPayload())
 	var buf bytes.Buffer
 
 	buf = input.decode(pack)
 	pack.Message.SetPayload(string(buf.Bytes()))
-	fmt.Printf(pack.Message.GetPayload())
+	fmt.Println(pack.Message.GetPayload())
 	packs = []*pipeline.PipelinePack{pack}
 	return
 }
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
-
-	fmt.Printf("decode")
 	var stats = make(map[string]string)
 
 	reader := bufio.NewReader(strings.NewReader(pack.Message.GetPayload()))
