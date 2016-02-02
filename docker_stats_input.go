@@ -127,7 +127,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			mstats.MemLimit = stats.MemoryStats.Limit
 			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
 			//pack.Message.SetPayload(fmt.Sprintf("'Container'%s, 'CPU': %.2f, 'MEM USAGE / LIMIT': %d / %d\t'MEM': %.2f\t'NET I/O': %d / %d\t'BLOCK I/O': %d, %d\n", container.Names, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
-			pack.Message.SetPayload(fmt.Sprintf("CPU: .%2.f", memstats.CPUPercent))
+			pack.Message.SetPayload(fmt.Sprintf("CPU: .%2.f", mstats.CPUPercent))
 			runner.Deliver(pack)
 		}
 	}
