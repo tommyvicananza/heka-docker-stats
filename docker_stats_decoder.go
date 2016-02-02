@@ -38,7 +38,7 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 			break
 		}
 
-		fields := strings.Split(string(data), " ")
+		fields := strings.Split(string(data), ":")
 
 		stats[fields[0]] = fields[1]
 	}

@@ -83,38 +83,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 			stats, _ = client.StatsStatic(container.ID)
 
-			//container.Names, mstats[container.ID].CPUPercent, mstats[container.ID].MemUsage, mstats[container.ID].MemLimit,
-			//mstats[container.ID].MemPercent, mstats[container.ID].NetworkRx, mstats[container.ID].NetworkTx, mstats[container.ID].BlockRead, mstats[container.ID].BlockWrite
 			containerID, _ := message.NewField("ContainerId", string(container.ID), "")
 			pack.Message.AddField(containerID)
-
-			//c := strconv.FormatFloat(calculateCPUPercent(previousCPU, previousSystem, &stats), 'f', 6, 64)
-			//cpuPercent, _ := message.NewField("CPUPercent", c, "")
-			//pack.Message.AddField(cpuPercent)
-			//
-			//memLimit, _ := message.NewField("MemLimit", string(stats.MemoryStats.Limit), "")
-			//pack.Message.AddField(memLimit)
-			//
-			//memUsage, _ := message.NewField("MemUsage", string(stats.MemoryStats.Usage), "")
-			//pack.Message.AddField(memUsage)
-			//
-			//m := strconv.FormatFloat(calculateMemPercent(&stats), 'f', 6, 64)
-			//memPercent, _ := message.NewField("MemPercent", m, "")
-			//pack.Message.AddField(memPercent)
-			//
-			//for _, networkstat := range stats.Networks {
-			//networkRx, _ := message.NewField("NetworkRx", string(networkstat.RxBytes), "")
-			//pack.Message.AddField(networkRx)
-			//
-			//networkTx, _ := message.NewField("NetworkRx", string(networkstat.TxBytes), "")
-			//pack.Message.AddField(networkTx)
-			//}
-			//br, bw := calculateBlockIO(stats)
-			//blockRead, _ := message.NewField("BlockRead", string(br), "")
-			//pack.Message.AddField(blockRead)
-			//
-			//blockWrite, _ := message.NewField("BlockWrite", string(bw), "")
-			//pack.Message.AddField(blockWrite)
 
 			mstats = dockerStat{}
 			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
@@ -122,8 +92,11 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			mstats.MemUsage = stats.MemoryStats.Usage
 			mstats.MemLimit = stats.MemoryStats.Limit
 			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
-			//pack.Message.SetPayload(fmt.Sprintf("Container%s, 'CPU': %.2f, 'MEM USAGE / LIMIT': %d / %d\t'MEM': %.2f\t'NET I/O': %d / %d\t'BLOCK I/O': %d, %d\n", container.Names, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
-			pack.Message.SetPayload(fmt.Sprintf("Container %s\nCPU %.2f\nMEMUSAGE/LIMIT %d/%d\nMEM %.2f\nNETI/O %d/%d\nBLOCKI/O %d/%d", container.Names, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
+			for _, networkstat := range stats.Networks {
+				mstats.NetworkRx = networkstat.RxBytes
+				mstats.NetworkTx = networkstat.TxBytes
+			}
+			pack.Message.SetPayload(fmt.Sprintf("Container:%s\nCPU:%.2f\nMEMUSAGE / LIMIT:%d/%d\nMEM:%.2f\nNET I/O:%d/%d\nBLOCK I/O:%d/%d", container.Names, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
 			runner.Deliver(pack)
 		}
 	}
