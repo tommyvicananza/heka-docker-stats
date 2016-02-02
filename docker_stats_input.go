@@ -100,7 +100,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			if len(container.Names) >= 1 {
 				container_name = strings.Replace(container.Names[0], "/", "", -1)
 			}
-			pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit%d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", container_name, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
+			pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", container_name, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
 			runner.Deliver(pack)
 		}
 	}
