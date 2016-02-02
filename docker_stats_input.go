@@ -104,12 +104,14 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				}
 			} else {
 				con, _ := client.InspectContainer(container.ID)
-				for _, values := range con.Config.Env {
-					if input.NameFromEnv == strings.SplitN(values, "=", 2) {
-
-						container_name = input.NameFromEnv
-					} else {
-						container_name = strings.Replace(container.Names[0], "/", "", -1)
+				for _, value := range con.Config.Env {
+					parts := strings.SplitN(values, "=", 2)
+					if len(parts) == 2 {
+						if input.NameFromEnv == parts[0] {
+							container_name = input.NameFromEnv
+						} else {
+							container_name = strings.Replace(container.Names[0], "/", "", -1)
+						}
 					}
 				}
 			}
