@@ -45,6 +45,7 @@ func (input *DockerStatsInput) Init(config interface{}) error {
 }
 
 func (input *DockerStatsInput) Stop() {
+	fmt.Println("Parando...")
 	close(input.stop)
 }
 
@@ -104,9 +105,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				for _, value := range con.Config.Env {
 					parts := strings.SplitN(value, "=", 2)
 					if len(parts) == 2 {
-						fmt.Printf("input: %s\n", input.NameFromEnv)
-						fmt.Printf("part0: %s\n", parts[0])
-						fmt.Printf("part1: %s\n", parts[1])
 						if input.NameFromEnv == parts[0] {
 							container_name = parts[1]
 							break
