@@ -23,7 +23,8 @@ type dockerStat struct {
 }
 
 type DockerStatsInputConfig struct {
-	TickerInterval uint `toml:"ticker_interval"`
+	TickerInterval uint   `toml:"ticker_interval"`
+	NameFromEnv    string `toml:"name_from_env"`
 }
 
 type DockerStatsInput struct {
@@ -97,8 +98,20 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				mstats.NetworkRx = networkstat.RxBytes
 				mstats.NetworkTx = networkstat.TxBytes
 			}
-			if len(container.Names) >= 1 {
-				container_name = strings.Replace(container.Names[0], "/", "", -1)
+			if input.NameFromEnv == "" {
+				if len(container.Names) >= 1 {
+					container_name = strings.Replace(container.Names[0], "/", "", -1)
+				}
+			} else {
+				con, _ := client.InspectContainer(container.ID)
+				for _, values := range con.Config.Env {
+					if input.NameFromEnv == strings.SplitN(values, "=", 2) {
+
+						container_name = input.NameFromEnv
+					} else {
+						container_name = strings.Replace(container.Names[0], "/", "", -1)
+					}
+				}
 			}
 			pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", container_name, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
 			runner.Deliver(pack)
