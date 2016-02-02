@@ -108,7 +108,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					parts := strings.SplitN(value, "=", 2)
 					if len(parts) == 2 {
 						if input.NameFromEnv == parts[0] {
-							container_name = input.NameFromEnv
+							container_name = parts[1]
 						} else {
 							container_name = strings.Replace(container.Names[0], "/", "", -1)
 						}
