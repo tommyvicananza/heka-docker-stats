@@ -79,7 +79,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			client, _ := docker.NewClientFromEnv()
 			containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
 			for _, container := range containers {
-				if containerName, exists := input.cacheHostnames[container.ID]; !exits {
+				if containerName, exists := input.cacheHostnames[container.ID]; !exists {
 					containerName = strings.Replace(container.Names[0], "/", "", -1)
 					input.cacheHostnames[container.ID] = containerName
 					if input.NameFromEnv != "" {
