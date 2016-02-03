@@ -71,6 +71,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		fmt.Println("tickChan")
 
 		var (
+			test                        chan string
 			previousCPU, previousSystem uint64
 			mstats                      dockerStat
 			preCPUStats, stats          docker.Stats
@@ -79,64 +80,67 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		client, _ := docker.NewClientFromEnv()
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
 		for _, container := range containers {
-			//go func() {
-			fmt.Println("checking containers")
+			go func() {
+				test = make(chan string)
+				fmt.Println("checking containers")
 
-			preCPUStats, err = client.StatsStatic(container.ID)
+				preCPUStats, err = client.StatsStatic(container.ID)
 
-			fmt.Println("preCPUStats")
-			if err != nil {
-				fmt.Println("preCPUStats:", err)
-				continue
-			}
-			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
-			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
-			stats, err = client.StatsStatic(container.ID)
-			fmt.Println("stats")
-			if err != nil {
-				fmt.Println("stats:", err)
-				continue
-			}
+				fmt.Println("preCPUStats")
+				if err != nil {
+					fmt.Println("preCPUStats:", err)
+					continue
+				}
+				previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
+				previousSystem = preCPUStats.CPUStats.SystemCPUUsage
+				stats, err = client.StatsStatic(container.ID)
+				fmt.Println("stats")
+				if err != nil {
+					fmt.Println("stats:", err)
+					continue
+				}
 
-			containerID, _ := message.NewField("ContainerId", string(container.ID), "")
+				containerID, _ := message.NewField("ContainerId", string(container.ID), "")
 
-			mstats = dockerStat{}
-			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
-			mstats.MemPercent = calculateMemPercent(&stats)
-			mstats.MemUsage = stats.MemoryStats.Usage
-			mstats.MemLimit = stats.MemoryStats.Limit
-			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
-			for _, networkstat := range stats.Networks {
-				mstats.NetworkRx = networkstat.RxBytes
-				mstats.NetworkTx = networkstat.TxBytes
-			}
-			container_name = strings.Replace(container.Names[0], "/", "", -1)
-			// if input.NameFromEnv != "" {
-			// 	con, _ := client.InspectContainer(container.ID)
-			// 	for _, value := range con.Config.Env {
-			// 		parts := strings.SplitN(value, "=", 2)
-			// 		if len(parts) == 2 {
-			// 			if input.NameFromEnv == parts[0] {
-			// 				container_name = parts[1]
-			// 				break
-			// 			}
-			// 		}
-			// 	}
-			// }
-			pack = <-packSupply
+				mstats = dockerStat{}
+				mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
+				mstats.MemPercent = calculateMemPercent(&stats)
+				mstats.MemUsage = stats.MemoryStats.Usage
+				mstats.MemLimit = stats.MemoryStats.Limit
+				mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
+				for _, networkstat := range stats.Networks {
+					mstats.NetworkRx = networkstat.RxBytes
+					mstats.NetworkTx = networkstat.TxBytes
+				}
+				container_name = strings.Replace(container.Names[0], "/", "", -1)
+				// if input.NameFromEnv != "" {
+				// 	con, _ := client.InspectContainer(container.ID)
+				// 	for _, value := range con.Config.Env {
+				// 		parts := strings.SplitN(value, "=", 2)
+				// 		if len(parts) == 2 {
+				// 			if input.NameFromEnv == parts[0] {
+				// 				container_name = parts[1]
+				// 				break
+				// 			}
+				// 		}
+				// 	}
+				// }
+				pack = <-packSupply
 
-			fmt.Println("packSupply")
-			pack.Message.AddField(containerID)
+				fmt.Println("packSupply")
+				pack.Message.AddField(containerID)
 
-			pack.Message.SetUuid(uuid.NewRandom())
-			pack.Message.SetTimestamp(time.Now().UnixNano())
-			pack.Message.SetType("docker.stats")
-			pack.Message.SetHostname(hostname)
+				pack.Message.SetUuid(uuid.NewRandom())
+				pack.Message.SetTimestamp(time.Now().UnixNano())
+				pack.Message.SetType("docker.stats")
+				pack.Message.SetHostname(hostname)
 
-			pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", container_name, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
-			runner.Deliver(pack)
-			fmt.Println("delivered")
-			//}()
+				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", container_name, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
+				runner.Deliver(pack)
+				fmt.Println("delivered")
+				test <- "cerral"
+				close(test)
+			}()
 		}
 	}
 	return nil
