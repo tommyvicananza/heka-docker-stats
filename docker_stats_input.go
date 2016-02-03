@@ -77,6 +77,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		client, _ := docker.NewClientFromEnv()
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
 		for _, container := range containers {
+			fmt.Println("checking containers")
 			pack = <-packSupply
 			pack.Message.SetUuid(uuid.NewRandom())
 			pack.Message.SetTimestamp(time.Now().UnixNano())
