@@ -63,8 +63,10 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 	for {
 		select {
 		case <-input.stop:
+			fmt.Println("lo que sea")
 			return nil
 		case <-tickChan:
+			fmt.Println("tickChan")
 		}
 		var (
 			previousCPU, previousSystem uint64
