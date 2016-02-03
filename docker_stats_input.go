@@ -85,6 +85,9 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetType("docker.metrics")
 			pack.Message.SetHostname(hostname)
 
+			if container.Status != "running" {
+				continue
+			}
 			preCPUStats, _ = client.StatsStatic(container.ID)
 			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
