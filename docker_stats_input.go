@@ -1,7 +1,6 @@
 package dockerstats
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -85,11 +84,11 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					case reachable := <-test:
 						// use err and reply
 						fmt.Println(reachable)
-						return nil
+						return
 					case <-time.After(5 * time.Second):
 						// call timed out
 						fmt.Println("Inalcanzable se supone")
-						return errors.New("Inalcanzable")
+						return
 					}
 
 					fmt.Println("checking containers")
