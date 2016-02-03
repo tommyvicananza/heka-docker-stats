@@ -71,6 +71,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			fmt.Println("tickChan")
 			var (
 				// test                        chan bool
+				err                         error
 				previousCPU, previousSystem uint64
 				mstats                      dockerStat
 				preCPUStats, stats          docker.Stats
