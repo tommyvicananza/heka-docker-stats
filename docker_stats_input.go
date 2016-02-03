@@ -126,9 +126,11 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				case reachable := <-test:
 					// use err and reply
 					fmt.Println(reachable)
-				case <-time.After(time.Second):
+					return nil
+				case <-time.After(5 * time.Second):
 					// call timed out
 					fmt.Println("Inalcanzable se supone")
+					return errors.new("Inalcanzable")
 				}
 			}
 		}
