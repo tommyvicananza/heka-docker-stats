@@ -101,22 +101,34 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				// go func() {
 				// 	test = make(chan bool)
 
+				a := 0
+
 				fmt.Println("checking containers")
 				pack = <-packSupply
 
+				moo()
+
 				pack.Message.SetUuid(uuid.NewRandom())
+				moo()
 				pack.Message.SetTimestamp(time.Now().UnixNano())
+				moo()
 				pack.Message.SetType("docker.stats")
+				moo()
 				pack.Message.SetHostname(hostname)
+				moo()
 
 				preCPUStats, err = client.StatsStatic(container.ID)
+				moo()
 				if err != nil {
 					fmt.Println("preCPUStats err:", err)
 					continue
 				}
 				previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
+				moo()
 				previousSystem = preCPUStats.CPUStats.SystemCPUUsage
-				stats, _ = client.StatsStatic(container.ID)
+				moo()
+				stats, err = client.StatsStatic(container.ID)
+				moo()
 				if err != nil {
 					fmt.Println("stats err:", err)
 					continue
@@ -127,15 +139,20 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 
 				mstats = dockerStat{}
 				mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
+				fmt.Println()
 				mstats.MemPercent = calculateMemPercent(&stats)
+				moo()
 				mstats.MemUsage = stats.MemoryStats.Usage
+				moo()
 				mstats.MemLimit = stats.MemoryStats.Limit
+				moo()
 				mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
 				for _, networkstat := range stats.Networks {
 					mstats.NetworkRx = networkstat.RxBytes
 					mstats.NetworkTx = networkstat.TxBytes
 				}
 				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", containerName, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
+				fmt.Println("final")
 				runner.Deliver(pack)
 				// test <- true
 				// }()
@@ -143,6 +160,13 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		}
 	}
 	return nil
+}
+
+var a int
+
+func moo() {
+	a = a + 1
+	fmt.Println(a)
 }
 
 func init() {
