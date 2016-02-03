@@ -125,7 +125,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				select {
 				case reachable := <-test:
 					// use err and reply
-					fmt.Println("Alcanzable se supone")
+					fmt.Println(reachable)
 				case <-time.After(time.Second):
 					// call timed out
 					fmt.Println("Inalcanzable se supone")
