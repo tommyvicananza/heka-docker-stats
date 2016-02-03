@@ -82,6 +82,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				fmt.Println("checking containers")
 				pack = <-packSupply
 
+				fmt.Println("packSupply")
+
 				pack.Message.SetUuid(uuid.NewRandom())
 				pack.Message.SetTimestamp(time.Now().UnixNano())
 				pack.Message.SetType("docker.stats")
@@ -131,6 +133,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				// }
 				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", container_name, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
 				runner.Deliver(pack)
+				fmt.Println("delivered")
 				//}()
 			}
 		}
