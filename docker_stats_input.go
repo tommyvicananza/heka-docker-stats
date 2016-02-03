@@ -101,8 +101,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				// go func() {
 				// 	test = make(chan bool)
 
-				a := 0
-
 				fmt.Println("checking containers")
 				pack = <-packSupply
 
