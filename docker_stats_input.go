@@ -1,6 +1,7 @@
 package dockerstats
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -130,7 +131,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				case <-time.After(5 * time.Second):
 					// call timed out
 					fmt.Println("Inalcanzable se supone")
-					return errors.new("Inalcanzable")
+					return errors.New("Inalcanzable")
 				}
 			}
 		}
