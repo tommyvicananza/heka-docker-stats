@@ -80,6 +80,18 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			for _, container := range containers {
 				go func() {
 					test = make(chan bool)
+
+					select {
+					case reachable := <-test:
+						// use err and reply
+						fmt.Println(reachable)
+						return nil
+					case <-time.After(5 * time.Second):
+						// call timed out
+						fmt.Println("Inalcanzable se supone")
+						return errors.New("Inalcanzable")
+					}
+
 					fmt.Println("checking containers")
 					pack = <-packSupply
 
@@ -123,16 +135,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					runner.Deliver(pack)
 					test <- true
 				}()
-				select {
-				case reachable := <-test:
-					// use err and reply
-					fmt.Println(reachable)
-					return nil
-				case <-time.After(5 * time.Second):
-					// call timed out
-					fmt.Println("Inalcanzable se supone")
-					return errors.New("Inalcanzable")
-				}
 			}
 		}
 	}
