@@ -80,6 +80,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				//go func() {
 				fmt.Println("checking containers")
 				pack = <-packSupply
+
 				pack.Message.SetUuid(uuid.NewRandom())
 				pack.Message.SetTimestamp(time.Now().UnixNano())
 				pack.Message.SetType("docker.stats")
@@ -104,18 +105,18 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					mstats.NetworkTx = networkstat.TxBytes
 				}
 				container_name = strings.Replace(container.Names[0], "/", "", -1)
-				if input.NameFromEnv != "" {
-					con, _ := client.InspectContainer(container.ID)
-					for _, value := range con.Config.Env {
-						parts := strings.SplitN(value, "=", 2)
-						if len(parts) == 2 {
-							if input.NameFromEnv == parts[0] {
-								container_name = parts[1]
-								break
-							}
-						}
-					}
-				}
+				// if input.NameFromEnv != "" {
+				// 	con, _ := client.InspectContainer(container.ID)
+				// 	for _, value := range con.Config.Env {
+				// 		parts := strings.SplitN(value, "=", 2)
+				// 		if len(parts) == 2 {
+				// 			if input.NameFromEnv == parts[0] {
+				// 				container_name = parts[1]
+				// 				break
+				// 			}
+				// 		}
+				// 	}
+				// }
 				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", container_name, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
 				runner.Deliver(pack)
 				//}()
