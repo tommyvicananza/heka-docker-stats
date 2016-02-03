@@ -98,7 +98,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				}
 
 				containerID, _ := message.NewField("ContainerId", string(container.ID), "")
-				pack.Message.AddField(containerID)
 
 				mstats = dockerStat{}
 				mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
@@ -126,6 +125,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				pack = <-packSupply
 
 				fmt.Println("packSupply")
+				pack.Message.AddField(containerID)
 
 				pack.Message.SetUuid(uuid.NewRandom())
 				pack.Message.SetTimestamp(time.Now().UnixNano())
