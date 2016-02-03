@@ -78,7 +78,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
 			for _, container := range containers {
 				go func() {
-					test = make(chan bool)
+					//test = make(chan bool)
 					//test <- true
 					fmt.Println("checking containers")
 					pack = <-packSupply
