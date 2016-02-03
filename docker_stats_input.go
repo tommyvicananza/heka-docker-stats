@@ -69,7 +69,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			fmt.Println("tickChan")
 			go func() {
 				var (
-					//test                        chan bool
+					test                        chan bool
 					previousCPU, previousSystem uint64
 					mstats                      dockerStat
 					preCPUStats, stats          docker.Stats
@@ -78,6 +78,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				client, _ := docker.NewClientFromEnv()
 				containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
 				for _, container := range containers {
+					test = make(chan bool)
 					test <- true
 					fmt.Println("checking containers")
 					pack = <-packSupply
