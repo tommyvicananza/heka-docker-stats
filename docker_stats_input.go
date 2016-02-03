@@ -67,17 +67,17 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			return nil
 		case <-tickChan:
 			fmt.Println("tickChan")
-			go func() {
-				var (
-					test                        chan bool
-					previousCPU, previousSystem uint64
-					mstats                      dockerStat
-					preCPUStats, stats          docker.Stats
-					container_name              string
-				)
-				client, _ := docker.NewClientFromEnv()
-				containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
-				for _, container := range containers {
+			var (
+				test                        chan bool
+				previousCPU, previousSystem uint64
+				mstats                      dockerStat
+				preCPUStats, stats          docker.Stats
+				containerName               string
+			)
+			client, _ := docker.NewClientFromEnv()
+			containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
+			for _, container := range containers {
+				go func() {
 					test = make(chan bool)
 					test <- true
 					fmt.Println("checking containers")
@@ -106,14 +106,14 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 						mstats.NetworkRx = networkstat.RxBytes
 						mstats.NetworkTx = networkstat.TxBytes
 					}
-					container_name = strings.Replace(container.Names[0], "/", "", -1)
+					containerName = strings.Replace(container.Names[0], "/", "", -1)
 					if input.NameFromEnv != "" {
 						con, _ := client.InspectContainer(container.ID)
 						for _, value := range con.Config.Env {
 							parts := strings.SplitN(value, "=", 2)
 							if len(parts) == 2 {
 								if input.NameFromEnv == parts[0] {
-									container_name = parts[1]
+									containerName = parts[1]
 									break
 								}
 							}
@@ -122,8 +122,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", container_name, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
 					runner.Deliver(pack)
 					close(test)
-				}
-			}()
+				}()
+			}
 		}
 	}
 	return nil
