@@ -52,6 +52,7 @@ func (input *DockerStatsInput) Stop() {
 func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 	helper pipeline.PluginHelper) error {
 
+	var err error
 	var pack *pipeline.PipelinePack
 
 	input.runner = runner
