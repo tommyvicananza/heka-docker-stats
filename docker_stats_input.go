@@ -108,10 +108,18 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				pack.Message.SetType("docker.stats")
 				pack.Message.SetHostname(hostname)
 
-				preCPUStats, _ = client.StatsStatic(container.ID)
+				preCPUStats, err = client.StatsStatic(container.ID)
+				if err != nil {
+					fmt.Println("preCPUStats err:", err)
+					continue
+				}
 				previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
 				previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 				stats, _ = client.StatsStatic(container.ID)
+				if err != nil {
+					fmt.Println("stats err:", err)
+					continue
+				}
 
 				containerID, _ := message.NewField("ContainerId", string(container.ID), "")
 				pack.Message.AddField(containerID)
