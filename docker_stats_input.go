@@ -70,7 +70,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		case <-tickChan:
 			fmt.Println("tickChan")
 			var (
-				test                        chan bool
+				// test                        chan bool
 				previousCPU, previousSystem uint64
 				mstats                      dockerStat
 				preCPUStats, stats          docker.Stats
