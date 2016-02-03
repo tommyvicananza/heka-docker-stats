@@ -68,7 +68,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		case <-tickChan:
 			fmt.Println("tickChan")
 			var (
-				test                        chan bool
+				//	test                        chan bool
 				previousCPU, previousSystem uint64
 				mstats                      dockerStat
 				preCPUStats, stats          docker.Stats
@@ -79,7 +79,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			for _, container := range containers {
 				go func() {
 					test = make(chan bool)
-					test <- true
+					//test <- true
 					fmt.Println("checking containers")
 					pack = <-packSupply
 
@@ -121,7 +121,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					}
 					pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", containerName, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
 					runner.Deliver(pack)
-					close(test)
+					//close(test)
 				}()
 			}
 		}
