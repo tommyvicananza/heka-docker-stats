@@ -91,6 +91,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 
 				fmt.Println("preCPUStats")
 				if err != nil {
+					fmt.Println("preCPUStats:", err)
 					continue
 				}
 				previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
@@ -98,6 +99,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				stats, err = client.StatsStatic(container.ID)
 				fmt.Println("stats")
 				if err != nil {
+					fmt.Println("stats:", err)
 					continue
 				}
 
