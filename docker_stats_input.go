@@ -120,17 +120,26 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				containerID, _ := message.NewField("ContainerId", string(container.ID), "")
 				pack.Message.AddField(containerID)
 
-				mstats = dockerStat{}
-				mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
-				mstats.MemPercent = calculateMemPercent(&stats)
-				mstats.MemUsage = stats.MemoryStats.Usage
-				mstats.MemLimit = stats.MemoryStats.Limit
-				mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
+				//mstats = dockerStat{}
+				//mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
+				//mstats.MemPercent = calculateMemPercent(&stats)
+				//mstats.MemUsage = stats.MemoryStats.Usage
+				//mstats.MemLimit = stats.MemoryStats.Limit
+				br, bw := calculateBlockIO(&stats)
 				for _, networkstat := range stats.Networks {
-					mstats.NetworkRx = networkstat.RxBytes
-					mstats.NetworkTx = networkstat.TxBytes
+					nrx = networkstat.RxBytes
+					ntx = networkstat.TxBytes
 				}
-				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d", containerName, mstats.CPUPercent, mstats.MemUsage, mstats.MemLimit, mstats.MemPercent, mstats.NetworkRx, mstats.NetworkTx, mstats.BlockRead, mstats.BlockWrite))
+				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
+					containerName,
+					calculateCPUPercent(previousCPU, previousSystem, &stats),
+					stats.MemoryStats.Usage,
+					stats.MemoryStats.Limit,
+					calculateMemPercent(&stats),
+					nrx,
+					ntx,
+					br,
+					bw))
 				runner.Deliver(pack)
 				// test <- true
 				// }()
@@ -164,7 +173,7 @@ func calculateCPUPercent(previousCPU, previousSystem uint64, stats *docker.Stats
 	return cpuPercent
 }
 
-func calculateBlockIO(stats docker.Stats) (blkRead uint64, blkWrite uint64) {
+func calculateBlockIO(stats *docker.Stats) (blkRead uint64, blkWrite uint64) {
 	blkio := stats.BlkioStats
 	for _, bioEntry := range blkio.IOServiceBytesRecursive {
 		switch strings.ToLower(bioEntry.Op) {
