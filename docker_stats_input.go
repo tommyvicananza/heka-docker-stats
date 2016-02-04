@@ -127,8 +127,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				//mstats.MemLimit = stats.MemoryStats.Limit
 				br, bw := calculateBlockIO(&stats)
 				for _, networkstat := range stats.Networks {
-					nrx = networkstat.RxBytes
-					ntx = networkstat.TxBytes
+					nrx := networkstat.RxBytes
+					ntx := networkstat.TxBytes
 				}
 				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
 					containerName,
