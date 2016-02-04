@@ -66,84 +66,82 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		case <-input.stop:
 			return nil
 		case <-tickChan:
-			var (
-				// test                        chan bool
-				err                                   error
-				previousCPU, previousSystem, ntx, nrx uint64
-				//mstats                                dockerStat
-				preCPUStats, stats docker.Stats
-				containerName      string
-			)
-			client, _ := docker.NewClientFromEnv()
-			containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
-			for _, container := range containers {
-				if containerName, exists := input.cacheHostnames[container.ID]; !exists {
-					containerName = strings.Replace(container.Names[0], "/", "", -1)
-					input.cacheHostnames[container.ID] = containerName
-					if input.NameFromEnv != "" {
-						con, _ := client.InspectContainer(container.ID)
-						for _, value := range con.Config.Env {
-							parts := strings.SplitN(value, "=", 2)
-							if len(parts) == 2 {
-								if input.NameFromEnv == parts[0] {
-									containerName = parts[1]
-									input.cacheHostnames[container.ID] = containerName
-									break
-								}
+		}
+		var (
+			// test                        chan bool
+			err                                   error
+			previousCPU, previousSystem, ntx, nrx uint64
+			//mstats                                dockerStat
+			preCPUStats, stats docker.Stats
+			containerName      string
+		)
+		client, _ := docker.NewClientFromEnv()
+		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
+		for _, container := range containers {
+			if containerName, exists := input.cacheHostnames[container.ID]; !exists {
+				containerName = strings.Replace(container.Names[0], "/", "", -1)
+				input.cacheHostnames[container.ID] = containerName
+				if input.NameFromEnv != "" {
+					con, _ := client.InspectContainer(container.ID)
+					for _, value := range con.Config.Env {
+						parts := strings.SplitN(value, "=", 2)
+						if len(parts) == 2 {
+							if input.NameFromEnv == parts[0] {
+								containerName = parts[1]
+								input.cacheHostnames[container.ID] = containerName
+								break
 							}
 						}
 					}
 				}
-
-				// go func() {
-				// 	test = make(chan bool)
-
-				pack = <-packSupply
-				pack.Message.SetUuid(uuid.NewRandom())
-				pack.Message.SetTimestamp(time.Now().UnixNano())
-				pack.Message.SetType("docker.stats")
-				pack.Message.SetHostname(hostname)
-
-				preCPUStats, err = client.StatsStatic(container.ID)
-				if err != nil {
-					fmt.Println("preCPUStats err:", err)
-					continue
-				}
-				previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
-				previousSystem = preCPUStats.CPUStats.SystemCPUUsage
-				stats, err = client.StatsStatic(container.ID)
-				if err != nil {
-					fmt.Println("stats err:", err)
-					continue
-				}
-
-				containerID, _ := message.NewField("ContainerId", string(container.ID), "")
-				pack.Message.AddField(containerID)
-
-				//mstats = dockerStat{}
-				//mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
-				//mstats.MemPercent = calculateMemPercent(&stats)
-				//mstats.MemUsage = stats.MemoryStats.Usage
-				//mstats.MemLimit = stats.MemoryStats.Limit
-				br, bw := calculateBlockIO(&stats)
-				for _, networkstat := range stats.Networks {
-					nrx = networkstat.RxBytes
-					ntx = networkstat.TxBytes
-				}
-				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
-					containerName,
-					calculateCPUPercent(previousCPU, previousSystem, &stats),
-					stats.MemoryStats.Usage,
-					stats.MemoryStats.Limit,
-					calculateMemPercent(&stats),
-					nrx,
-					ntx,
-					br,
-					bw))
-				runner.Deliver(pack)
-				// test <- true
-				// }()
 			}
+
+			// go func() {
+			// 	test = make(chan bool)
+
+			preCPUStats, err = client.StatsStatic(container.ID)
+			if err != nil {
+				fmt.Println("preCPUStats err:", err)
+				continue
+			}
+			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
+			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
+			stats, err = client.StatsStatic(container.ID)
+			if err != nil {
+				fmt.Println("stats err:", err)
+				continue
+			}
+
+			containerID, _ := message.NewField("ContainerId", string(container.ID), "")
+
+			//mstats = dockerStat{}
+			//mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
+			//mstats.MemPercent = calculateMemPercent(&stats)
+			//mstats.MemUsage = stats.MemoryStats.Usage
+			//mstats.MemLimit = stats.MemoryStats.Limit
+			br, bw := calculateBlockIO(&stats)
+			for _, networkstat := range stats.Networks {
+				nrx = networkstat.RxBytes
+				ntx = networkstat.TxBytes
+			}
+			pack = <-packSupply
+			pack.Message.SetUuid(uuid.NewRandom())
+			pack.Message.SetTimestamp(time.Now().UnixNano())
+			pack.Message.SetType("docker.stats")
+			pack.Message.SetHostname(hostname)
+			pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
+				containerName,
+				calculateCPUPercent(previousCPU, previousSystem, &stats),
+				stats.MemoryStats.Usage,
+				stats.MemoryStats.Limit,
+				calculateMemPercent(&stats),
+				nrx,
+				ntx,
+				br,
+				bw))
+			runner.Deliver(pack)
+			// test <- true
+			// }()
 		}
 	}
 	return nil
