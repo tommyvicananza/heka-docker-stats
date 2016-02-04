@@ -184,6 +184,6 @@ func calculateMemPercent(stats *docker.Stats) float64 {
 	if stats.MemoryStats.Limit != 0 {
 		memPercent = float64(stats.MemoryStats.Usage) / float64(stats.MemoryStats.Limit) * 100.0
 	}
-	fmt.Printf("Mem Percent: %.2f\n", cpuDelta)
+	fmt.Printf("Mem Percent: %.2f\n", memPercent)
 	return memPercent
 }
