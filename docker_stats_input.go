@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mozilla-services/heka/message"
 	"github.com/mozilla-services/heka/pipeline"
 	"github.com/pborman/uuid"
 	"github.com/tommyvicananza/go-dockerclient"
@@ -111,9 +110,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				fmt.Println("stats err:", err)
 				continue
 			}
-
-			containerID, _ := message.NewField("ContainerId", string(container.ID), "")
-
 			//mstats = dockerStat{}
 			//mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
 			//mstats.MemPercent = calculateMemPercent(&stats)
