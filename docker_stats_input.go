@@ -68,11 +68,11 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		}
 		var (
 			// test                        chan bool
-			err                                   error
-			previousCPU, previousSystem, ntx, nrx uint64
-			mstats                                dockerStat
-			preCPUStats, stats                    docker.Stats
-			containerName                         string
+			err                         error
+			previousCPU, previousSystem uint64
+			mstats                      dockerStat
+			preCPUStats, stats          docker.Stats
+			containerName               string
 		)
 		client, _ := docker.NewClientFromEnv()
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
