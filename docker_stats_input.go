@@ -70,9 +70,9 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			// test                        chan bool
 			err                                   error
 			previousCPU, previousSystem, ntx, nrx uint64
-			//mstats                                dockerStat
-			preCPUStats, stats docker.Stats
-			containerName      string
+			mstats                                dockerStat
+			preCPUStats, stats                    docker.Stats
+			containerName                         string
 		)
 		client, _ := docker.NewClientFromEnv()
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
@@ -97,28 +97,31 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 
 			// go func() {
 			// 	test = make(chan bool)
-
-			preCPUStats, err = client.StatsStatic(container.ID)
-			if err != nil {
-				fmt.Println("preCPUStats err:", err)
-				continue
+			if container.ID != "" {
+				preCPUStats, err = client.StatsStatic(container.ID)
+				if err != nil {
+					fmt.Println("preCPUStats err:", err)
+					continue
+				}
 			}
 			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
-			stats, err = client.StatsStatic(container.ID)
-			if err != nil {
-				fmt.Println("stats err:", err)
-				continue
+			if container.ID != "" {
+				stats, err = client.StatsStatic(container.ID)
+				if err != nil {
+					fmt.Println("stats err:", err)
+					continue
+				}
 			}
-			//mstats = dockerStat{}
-			//mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
-			//mstats.MemPercent = calculateMemPercent(&stats)
-			//mstats.MemUsage = stats.MemoryStats.Usage
-			//mstats.MemLimit = stats.MemoryStats.Limit
-			br, bw := calculateBlockIO(&stats)
+			mstats = dockerStat{}
+			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
+			mstats.MemPercent = calculateMemPercent(&stats)
+			mstats.MemUsage = stats.MemoryStats.Usage
+			mstats.MemLimit = stats.MemoryStats.Limit
+			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(&stats)
 			for _, networkstat := range stats.Networks {
-				nrx = networkstat.RxBytes
-				ntx = networkstat.TxBytes
+				mstats.NetworkRx = networkstat.RxBytes
+				mstats.NetworkTx = networkstat.TxBytes
 			}
 			pack = <-packSupply
 			pack.Message.SetUuid(uuid.NewRandom())
@@ -127,14 +130,14 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetHostname(hostname)
 			pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
 				containerName,
-				calculateCPUPercent(previousCPU, previousSystem, &stats),
-				stats.MemoryStats.Usage,
-				stats.MemoryStats.Limit,
-				calculateMemPercent(&stats),
-				nrx,
-				ntx,
-				br,
-				bw))
+				mstats.CPUPercent,
+				mstats.MemUsage,
+				mstats.MemLimit,
+				mstats.MemPercent,
+				mstats.NetworkRx,
+				mstats.NetworkTx,
+				mstats.BlockRead,
+				mstats.BlockWrite))
 			runner.Deliver(pack)
 			// test <- true
 			// }()
