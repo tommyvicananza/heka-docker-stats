@@ -103,7 +103,10 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					fmt.Println("preCPUStats err:", err)
 					continue
 				}
+			} else {
+				fmt.Println("es vacío")
 			}
+
 			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 			if container.ID != "" {
@@ -112,6 +115,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					fmt.Println("stats err:", err)
 					continue
 				}
+			} else {
+				fmt.Println("es vacío")
 			}
 			mstats = dockerStat{}
 			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
