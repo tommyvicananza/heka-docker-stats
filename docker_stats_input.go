@@ -98,6 +98,12 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				// go func() {
 				// 	test = make(chan bool)
 
+				pack = <-packSupply
+				pack.Message.SetUuid(uuid.NewRandom())
+				pack.Message.SetTimestamp(time.Now().UnixNano())
+				pack.Message.SetType("docker.stats")
+				pack.Message.SetHostname(hostname)
+
 				preCPUStats, err = client.StatsStatic(container.ID)
 				if err != nil {
 					fmt.Println("preCPUStats err:", err)
@@ -124,11 +130,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					nrx = networkstat.RxBytes
 					ntx = networkstat.TxBytes
 				}
-				pack = <-packSupply
-				pack.Message.SetUuid(uuid.NewRandom())
-				pack.Message.SetTimestamp(time.Now().UnixNano())
-				pack.Message.SetType("docker.stats")
-				pack.Message.SetHostname(hostname)
 				pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
 					containerName,
 					calculateCPUPercent(previousCPU, previousSystem, &stats),
