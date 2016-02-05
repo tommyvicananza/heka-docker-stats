@@ -70,8 +70,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			// test                        chan bool
 			err                         error
 			previousCPU, previousSystem uint64
-			mstats                      dockerStat
-			preCPUStats, stats          docker.Stats
+			mstats                      *dockerStat
+			preCPUStats, stats          *docker.Stats
 			containerName               string
 		)
 		client, _ := docker.NewClientFromEnv()
@@ -123,11 +123,11 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				fmt.Println("es vacío")
 			}
 			mstats = dockerStat{}
-			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, &stats)
-			mstats.MemPercent = calculateMemPercent(&stats)
+			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, stats)
+			mstats.MemPercent = calculateMemPercent(stats)
 			mstats.MemUsage = stats.MemoryStats.Usage
 			mstats.MemLimit = stats.MemoryStats.Limit
-			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(&stats)
+			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
 			for _, networkstat := range stats.Networks {
 				mstats.NetworkRx = networkstat.RxBytes
 				mstats.NetworkTx = networkstat.TxBytes
