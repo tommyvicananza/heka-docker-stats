@@ -99,13 +99,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			// 	test = make(chan bool)
 
 			preCPUStats, err = client.StatsStatic(container.ID)
-			if err != nil {
-				fmt.Println("preCPUStats err:", err)
-				continue
-			} else {
-				fmt.Println("es nil")
-			}
-			if preCPUStats != nil {
+			if preCPUStats == nil {
 				fmt.Println("Es vacio")
 				continue
 			}
@@ -113,12 +107,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 
 			stats, err = client.StatsStatic(container.ID)
-			if err == nil {
-				fmt.Println("stats err:", err)
-				continue
-			} else {
-				fmt.Println("es nil")
-			}
 			if stats == nil {
 				fmt.Println("Es vacio")
 				continue
