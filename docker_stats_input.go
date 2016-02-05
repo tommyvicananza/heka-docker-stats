@@ -122,7 +122,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			} else {
 				fmt.Println("es vacío")
 			}
-			mstats = dockerStat{}
+			mstats = &dockerStat{}
 			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, stats)
 			mstats.MemPercent = calculateMemPercent(stats)
 			mstats.MemUsage = stats.MemoryStats.Usage
