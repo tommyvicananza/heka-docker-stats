@@ -102,6 +102,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				if err != nil {
 					fmt.Println("preCPUStats err:", err)
 					continue
+				} else {
+					fmt.Println("es nil")
 				}
 			} else {
 				fmt.Println("es vacío")
@@ -114,6 +116,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				if err != nil {
 					fmt.Println("stats err:", err)
 					continue
+				} else {
+					fmt.Println("es nil")
 				}
 			} else {
 				fmt.Println("es vacío")
