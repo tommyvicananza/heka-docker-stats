@@ -103,6 +103,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				fmt.Println("Es vacio")
 				continue
 			}
+			fmt.Println("Hecho precpu")
 			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 
@@ -111,6 +112,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				fmt.Println("Es vacio")
 				continue
 			}
+			fmt.Println("Hecho cpu")
 			mstats = &dockerStat{}
 			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, stats)
 			mstats.MemPercent = calculateMemPercent(stats)
