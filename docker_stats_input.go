@@ -97,7 +97,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 
 			// go func() {
 			// 	test = make(chan bool)
-			opts := docker.StatsStaticOptions{ID: "asfasf", Stream: true}
+			opts := docker.StatsStaticOptions{ID: container.ID, Stream: false}
 			preCPUStats, _ = client.StatsStatic(opts)
 			if preCPUStats == nil {
 				fmt.Println("Es vacio")
