@@ -97,7 +97,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 
 			// go func() {
 			// 	test = make(chan bool)
-			opts := docker.StatsStaticOptions{ID: container.ID, Stream: false}
+			opts := docker.StatsStaticOptions{ID: "asfasf", Stream: false}
 			preCPUStats, _ = client.StatsStatic(opts)
 			if preCPUStats == nil {
 				fmt.Println("Es vacio")
@@ -159,12 +159,9 @@ func calculateCPUPercent(previousCPU, previousSystem uint64, stats *docker.Stats
 		// calculate the change for the entire system between readings
 		systemDelta = float64(stats.CPUStats.SystemCPUUsage) - float64(previousSystem)
 	)
-	fmt.Printf("CPU Delta: %.2f\n", cpuDelta)
-	fmt.Printf("System Delta: %.2f\n", systemDelta)
 	if systemDelta > 0.0 && cpuDelta > 0.0 {
 		cpuPercent = (cpuDelta / systemDelta) * float64(len(stats.CPUStats.CPUUsage.PercpuUsage)) * 100.0
 	}
-	fmt.Printf("CPU Percent: %.2f\n", cpuPercent)
 	return cpuPercent
 }
 
@@ -174,10 +171,8 @@ func calculateBlockIO(stats *docker.Stats) (blkRead uint64, blkWrite uint64) {
 		switch strings.ToLower(bioEntry.Op) {
 		case "read":
 			blkRead = blkRead + bioEntry.Value
-			fmt.Printf("Block Read: %.d\n", blkRead)
 		case "write":
 			blkWrite = blkWrite + bioEntry.Value
-			fmt.Printf("Block Write: %.d\n", blkWrite)
 		}
 	}
 	return
@@ -188,6 +183,5 @@ func calculateMemPercent(stats *docker.Stats) float64 {
 	if stats.MemoryStats.Limit != 0 {
 		memPercent = float64(stats.MemoryStats.Usage) / float64(stats.MemoryStats.Limit) * 100.0
 	}
-	fmt.Printf("Mem Percent: %.2f\n", memPercent)
 	return memPercent
 }
