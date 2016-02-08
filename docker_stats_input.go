@@ -98,7 +98,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			// go func() {
 			// 	test = make(chan bool)
 
-			preCPUStats, _ = client.StatsStatic(container.ID)
+			opts := client.StatsStaticOptions{ID: container.ID, Stream: fase}
+			preCPUStats, _ = client.StatsStatic(opts)
 			if preCPUStats == nil {
 				fmt.Println("Es vacio")
 				continue
@@ -106,7 +107,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 
-			stats, _ = client.StatsStatic(container.ID)
+			stats, _ = client.StatsStatic(opts)
 			if stats == nil {
 				fmt.Println("Es vacio")
 				continue
