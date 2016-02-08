@@ -97,7 +97,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 
 			// go func() {
 			// 	test = make(chan bool)
-			client.Sta
 			opts := docker.StatsStaticOptions{ID: container.ID, Stream: fase}
 			preCPUStats, _ = client.StatsStatic(opts)
 			if preCPUStats == nil {
