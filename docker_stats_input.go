@@ -74,7 +74,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			preCPUStats, stats          *docker.Stats
 			containerName               string
 		)
-		client, _ := docker.NewClientFromEnv()
+		endpoint := "unix:///var/run/docker.sock"
+		client, _ := docker.NewClient(endpoint)
 		containers, _ := client.ListContainers(docker.ListContainersOptions{Filters: map[string][]string{"status": {"running"}}})
 		for _, container := range containers {
 			if containerName, exists := input.cacheHostnames[container.ID]; !exists {
