@@ -95,7 +95,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					}
 				}
 			}
-			fmt.Println(containerName)
+			fmt.Println(input.cacheHostnames[container.ID])
 
 			// go func() {
 			// 	test = make(chan bool)
