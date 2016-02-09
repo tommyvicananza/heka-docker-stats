@@ -129,7 +129,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetTimestamp(time.Now().UnixNano())
 			pack.Message.SetType("docker.stats")
 			pack.Message.SetHostname(hostname)
-			pack.Message.SetPayload(fmt.Sprintf("container_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
+			pack.Message.SetPayload(fmt.Sprintf("hostname %s\ncontainer_id %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
+				hostname,
 				input.cacheHostnames[container.ID],
 				mstats.CPUPercent,
 				mstats.MemUsage,
