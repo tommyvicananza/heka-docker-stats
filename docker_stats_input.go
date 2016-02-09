@@ -72,7 +72,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			previousCPU, previousSystem uint64
 			mstats                      *dockerStat
 			preCPUStats, stats          *docker.Stats
-			containerName               string
 		)
 		endpoint := "unix:///var/run/docker.sock"
 		client, _ := docker.NewClient(endpoint)
