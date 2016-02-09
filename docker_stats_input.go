@@ -95,6 +95,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					}
 				}
 			}
+			fmt.Println(containerName)
 
 			// go func() {
 			// 	test = make(chan bool)
