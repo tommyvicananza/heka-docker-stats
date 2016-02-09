@@ -119,7 +119,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			mstats.MemPercent = calculateMemPercent(stats)
 			mstats.MemUsage = stats.MemoryStats.Usage
 			mstats.MemLimit = stats.MemoryStats.Limit
-			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
+			mstats.BlockRead, mstats.BlockWrite = calculfateBlockIO(stats)
 			for _, networkstat := range stats.Networks {
 				mstats.NetworkRx = networkstat.RxBytes
 				mstats.NetworkTx = networkstat.TxBytes
@@ -128,9 +128,9 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetUuid(uuid.NewRandom())
 			pack.Message.SetTimestamp(time.Now().UnixNano())
 			pack.Message.SetType("DockerStats")
-			pack.Message.SetHostname(strings.Replace(hostname, "-", "_", -1))
+			pack.Message.SetHostname(hostname)
 			pack.Message.SetPayload(fmt.Sprintf("hostname %s\ncontainer_name %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
-				hostname,
+				strings.Replace(hostname, "-", "_", -1),
 				input.cacheHostnames[container.ID],
 				mstats.CPUPercent,
 				mstats.MemUsage,
