@@ -119,7 +119,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			mstats.MemPercent = calculateMemPercent(stats)
 			mstats.MemUsage = stats.MemoryStats.Usage
 			mstats.MemLimit = stats.MemoryStats.Limit
-			mstats.BlockRead, mstats.BlockWrite = calculfateBlockIO(stats)
+			mstats.BlockRead, mstats.BlockWrite = calculateBlockIO(stats)
 			for _, networkstat := range stats.Networks {
 				mstats.NetworkRx = networkstat.RxBytes
 				mstats.NetworkTx = networkstat.TxBytes
