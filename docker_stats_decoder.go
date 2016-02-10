@@ -3,6 +3,7 @@ package dockerstats
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	"github.com/mozilla-services/heka/pipeline"
 )
@@ -73,7 +74,11 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	//fmt.Println(b)
 	//t := pack.Message.Timestamp
 	//fmt.Println(t)
-	json, _ := json.Marshal(stats)
+	json, err := json.Marshal(stats)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
 	return *bytes.NewBuffer(json)
 }
 
