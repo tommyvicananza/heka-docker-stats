@@ -39,7 +39,7 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 }
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
-	containerName, _ := pack.Message.GetFieldValue("ContainerName")
+	containerName, _ := string(pack.Message.GetFieldValue("ContainerName"))
 	cpuPercent, _ := pack.Message.GetFieldValue("CPUPercent")
 	memoryPercent, _ := pack.Message.GetFieldValue("MemoryPercent")
 	memoryUsage, _ := pack.Message.GetFieldValue("MemoryUsage")
