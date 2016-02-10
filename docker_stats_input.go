@@ -144,7 +144,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			netInput, _ := message.NewField("NetInput", uint64(mstats.NetworkRx), "")
 			pack.Message.AddField(netInput)
 			netOutput, _ := message.NewField("NetOutput", uint64(mstats.NetworkTx), "")
-			pack.Message.AddField(netOuput)
+			pack.Message.AddField(netOutput)
 			blockRead, _ := message.NewField("BlockRead", uint64(mstats.BlockRead), "")
 			pack.Message.AddField(blockRead)
 			blockWrite, _ := message.NewField("BlockWrite", uint64(mstats.BlockWrite), "")
