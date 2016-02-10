@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mozilla-services/heka/message"
 	"github.com/mozilla-services/heka/pipeline"
 	"github.com/pborman/uuid"
 	"github.com/tommyvicananza/go-dockerclient"
@@ -132,24 +131,24 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetHostname(hostname)
 
 			fmt.Println("asignaciones")
-			containerName, _ := message.NewField("ContainerName", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
-			pack.Message.AddField(containerName)
-			cpuPercent, _ := message.NewField("CPUPercent", float64(mstats.CPUPercent), "")
-			pack.Message.AddField(cpuPercent)
-			memUsage, _ := message.NewField("MemoryUsage", uint64(mstats.MemUsage), "")
-			pack.Message.AddField(memUsage)
-			memLimit, _ := message.NewField("MemoryLimit", uint64(mstats.MemLimit), "")
-			pack.Message.AddField(memLimit)
-			memPercent, _ := message.NewField("MemoryPercent", float64(mstats.MemPercent), "")
-			pack.Message.AddField(memPercent)
-			netInput, _ := message.NewField("NetInput", uint64(mstats.NetworkRx), "")
-			pack.Message.AddField(netInput)
-			netOutput, _ := message.NewField("NetOutput", uint64(mstats.NetworkTx), "")
-			pack.Message.AddField(netOutput)
-			blockRead, _ := message.NewField("BlockRead", uint64(mstats.BlockRead), "")
-			pack.Message.AddField(blockRead)
-			blockWrite, _ := message.NewField("BlockWrite", uint64(mstats.BlockWrite), "")
-			pack.Message.AddField(blockWrite)
+			//containerName, _ := message.NewField("ContainerName", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
+			//pack.Message.AddField(containerName)
+			//cpuPercent, _ := message.NewField("CPUPercent", float64(mstats.CPUPercent), "")
+			//pack.Message.AddField(cpuPercent)
+			//memUsage, _ := message.NewField("MemoryUsage", uint64(mstats.MemUsage), "")
+			//pack.Message.AddField(memUsage)
+			//memLimit, _ := message.NewField("MemoryLimit", uint64(mstats.MemLimit), "")
+			//pack.Message.AddField(memLimit)
+			//memPercent, _ := message.NewField("MemoryPercent", float64(mstats.MemPercent), "")
+			//pack.Message.AddField(memPercent)
+			//netInput, _ := message.NewField("NetInput", uint64(mstats.NetworkRx), "")
+			//pack.Message.AddField(netInput)
+			//netOutput, _ := message.NewField("NetOutput", uint64(mstats.NetworkTx), "")
+			//pack.Message.AddField(netOutput)
+			//blockRead, _ := message.NewField("BlockRead", uint64(mstats.BlockRead), "")
+			//pack.Message.AddField(blockRead)
+			//blockWrite, _ := message.NewField("BlockWrite", uint64(mstats.BlockWrite), "")
+			//pack.Message.AddField(blockWrite)
 
 			fmt.Println("setpayload")
 			pack.Message.SetPayload(fmt.Sprintf("container_name %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
