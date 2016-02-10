@@ -54,7 +54,7 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	}
 	a := pack.Message.Hostname
 	fmt.Println(a)
-	a, _ = pack.Message.GetFieldValue("ContainerName")
+	a, _ := pack.Message.GetFieldValue("ContainerName")
 	fmt.Println(a)
 	a, _ = pack.Message.GetFieldValue("CPUPercent")
 	fmt.Println(a)
