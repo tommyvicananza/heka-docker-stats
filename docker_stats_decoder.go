@@ -72,8 +72,8 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	fmt.Println(b)
 	b, _ = pack.Message.GetFieldValue("BlockWrite")
 	fmt.Println(b)
-	a = pack.Message.Timestamp
-	fmt.Println(a)
+	t := pack.Message.Timestamp
+	fmt.Println(t)
 	json, _ := json.Marshal(stats)
 	return *bytes.NewBuffer(json)
 }
