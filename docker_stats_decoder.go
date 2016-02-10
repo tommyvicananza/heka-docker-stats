@@ -31,6 +31,7 @@ func (input *DockerStatsDecoder) Init(config interface{}) error {
 }
 
 func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*pipeline.PipelinePack, err error) {
+	fmt.Println("Decode mayusculas")
 	var buf bytes.Buffer
 	buf = input.decode(pack)
 	pack.Message.SetPayload(string(buf.Bytes()))
