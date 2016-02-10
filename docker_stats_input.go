@@ -132,8 +132,10 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetHostname(hostname)
 
 			fmt.Println("asignaciones")
-			containerName, _ := message.NewField("MetricsType", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
+			containerName, _ := message.NewField("ContainerName", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
 			pack.Message.AddField(containerName)
+			cpuPercent, _ := message.NewField("CPUPercent", float64(mstats.CPUPercent), "")
+			pack.Message.AddField(cpuPercent)
 			//containerName, _ := message.NewField("ContainerName", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
 			//pack.Message.AddField(containerName)
 			//cpuPercent, _ := message.NewField("CPUPercent", float64(mstats.CPUPercent), "")
