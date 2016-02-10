@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mozilla-services/heka/message"
 	"github.com/mozilla-services/heka/pipeline"
 	"github.com/pborman/uuid"
 	"github.com/tommyvicananza/go-dockerclient"
@@ -129,9 +130,28 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetTimestamp(time.Now().UnixNano())
 			pack.Message.SetType("DockerStats")
 			pack.Message.SetHostname(hostname)
-			pack.Message.SetPayload(fmt.Sprintf("hostname %s\ncontainer_name %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
-				strings.Replace(hostname, "-", "_", -1),
-				input.cacheHostnames[container.ID],
+
+			containerName := message.NewField("ContainerName", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
+			pack.Message.AddField(containerName)
+			cpuPercent := message.NewField("CPUPercent", float64(mstats.CPUPercent), "")
+			pack.Message.AddField(cpuPercent)
+			memUsage := message.NewField("MemoryUsage", uint64(mstats.MemUsage), "")
+			pack.Message.AddField(memUsage)
+			memLimit := message.NewField("MemoryLimit", uint64(mstats.MemLimit), "")
+			pack.Message.AddField(memLimit)
+			memPercent := message.NewField("MemoryPercent", float64(mstats.MemPercent), "")
+			pack.Message.AddField(memPercent)
+			netInput := message.NewField("NetInput", uint64(mstats.NetworkRx), "")
+			pack.Message.AddField(netInput)
+			netOutput := message.NewField("NetOutput", uint64(mstats.NetworkTx), "")
+			pack.Message.AddField(netOuput)
+			blockRead := message.NewField("BlockRead", uint64(mstats.BlockRead), "")
+			pack.Message.AddField(blockRead)
+			blockWrite := message.NewField("BlockWrite", uint64(mstats.BlockWrite), "")
+			pack.Message.AddField(blockWrite)
+
+			pack.Message.SetPayload(fmt.Sprintf("container_name %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
+				strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1),
 				mstats.CPUPercent,
 				mstats.MemUsage,
 				mstats.MemLimit,
