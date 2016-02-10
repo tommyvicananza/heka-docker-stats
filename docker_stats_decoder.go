@@ -40,14 +40,15 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	containerName, _ := pack.Message.GetFieldValue("ContainerName")
-	cpuPercent, _ = pack.Message.GetFieldValue("CPUPercent")
-	memoryPercent, _ = pack.Message.GetFieldValue("MemoryPercent")
-	memoryUsage, _ = pack.Message.GetFieldValue("MemoryUsage")
-	memoryLimit, _ = pack.Message.GetFieldValue("MemoryLimit")
-	networkInput, _ = pack.Message.GetFieldValue("NetworkInput")
-	networkOutput, _ = pack.Message.GetFieldValue("NetworkOutput")
-	blockInput, _ = pack.Message.GetFieldValue("BlockInput")
-	blockOutput, _ = pack.Message.GetFieldValue("BlockOutput")
+	cpuPercent, _ := pack.Message.GetFieldValue("CPUPercent")
+	memoryPercent, _ := pack.Message.GetFieldValue("MemoryPercent")
+	memoryUsage, _ := pack.Message.GetFieldValue("MemoryUsage")
+	memoryLimit, _ := pack.Message.GetFieldValue("MemoryLimit")
+	networkInput, _ := pack.Message.GetFieldValue("NetworkInput")
+	networkOutput, _ := pack.Message.GetFieldValue("NetworkOutput")
+	blockInput, _ := pack.Message.GetFieldValue("BlockInput")
+	blockOutput, _ := pack.Message.GetFieldValue("BlockOutput")
+
 	stats := StatsPayload{
 		Hostname:      *pack.Message.Hostname,
 		ContainerName: containerName,
