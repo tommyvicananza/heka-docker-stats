@@ -52,7 +52,7 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	stats := StatsPayload{
 		Hostname:      *pack.Message.Hostname,
 		ContainerName: string(containerName),
-		CPUPercent:    cpuPercent,
+		CPUPercent:    cpuPercent.(string),
 		MemPercent:    memoryPercent,
 		MemUsage:      memoryUsage,
 		MemLimit:      memoryLimit,
