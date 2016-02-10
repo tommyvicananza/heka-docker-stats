@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mozilla-services/heka/message"
 	"github.com/mozilla-services/heka/pipeline"
 	"github.com/pborman/uuid"
 	"github.com/tommyvicananza/go-dockerclient"
@@ -131,6 +132,8 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetHostname(hostname)
 
 			fmt.Println("asignaciones")
+			containerName, _ := message.NewField("MetricsType", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
+			pack.Message.AddField(containerName)
 			//containerName, _ := message.NewField("ContainerName", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
 			//pack.Message.AddField(containerName)
 			//cpuPercent, _ := message.NewField("CPUPercent", float64(mstats.CPUPercent), "")
