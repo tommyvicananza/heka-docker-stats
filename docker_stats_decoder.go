@@ -3,6 +3,7 @@ package dockerstats
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	"github.com/mozilla-services/heka/pipeline"
 )
@@ -39,19 +40,40 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	stats := StatsPayload{
-		Hostname:      pack.Message.GetFieldValue("Hostname"),
-		ContainerName: pack.Message.GetFieldValue("ContainerName"),
-		CPUPercent:    pack.Message.GetFieldValue("CPUPercent"),
-		MemPercent:    pack.Message.GetFieldValue("MemoryPercent"),
-		MemUsage:      pack.Message.GetFieldValue("MemoryUsage"),
-		MemLimit:      pack.Message.GetFieldValue("MemoryLimit"),
-		NetworkRx:     pack.Message.GetFieldValue("NetInput"),
-		NetworkTx:     pack.Message.GetFieldValue("NetOuput"),
-		BlockRead:     pack.Message.GetFieldValue("BlockRead"),
-		BlockWrite:    pack.Message.GetFieldValue("BlockWrite"),
-		TimeStamp:     pack.Message.GetFieldValue("Timestamp"),
+		Hostname:      "hola",
+		ContainerName: "hola",
+		CPUPercent:    1.0,
+		MemPercent:    2.0,
+		MemUsage:      3,
+		MemLimit:      4,
+		NetworkRx:     5,
+		NetworkTx:     6,
+		BlockRead:     7,
+		BlockWrite:    8,
+		TimeStamp:     932,
 	}
-
+	a, _ := pack.Message.GetFieldValue("Hostname")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("ContainerName")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("CPUPercent")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("MemoryPercent")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("MemoryUsage")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("MemoryLimit")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("NetInput")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("NetOuput")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("BlockRead")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("BlockWrite")
+	fmt.Println(a)
+	a, _ = pack.Message.GetFieldValue("Timestamp")
+	fmt.Println(a)
 	json, _ := json.Marshal(stats)
 	return *bytes.NewBuffer(json)
 }
