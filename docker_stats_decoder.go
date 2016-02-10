@@ -13,13 +13,13 @@ type StatsPayload struct {
 	ContainerName string  `json:"container_name"`
 	CPUPercent    float64 `json:"cpu_percent"`
 	MemPercent    float64 `json:"mem_percent"`
-	MemUsage      uint64  `json:"mem_usage"`
-	MemLimit      uint64  `json:"mem_limit"`
-	NetworkRx     uint64  `json:"network_rx"`
-	NetworkTx     uint64  `json:"network_tx"`
-	BlockRead     uint64  `json:"block_read"`
-	BlockWrite    uint64  `json:"block_write"`
-	TimeStamp     uint64  `json:"timestamp"`
+	MemUsage      int64   `json:"mem_usage"`
+	MemLimit      int64   `json:"mem_limit"`
+	NetworkRx     int64   `json:"network_rx"`
+	NetworkTx     int64   `json:"network_tx"`
+	BlockRead     int64   `json:"block_read"`
+	BlockWrite    int64   `json:"block_write"`
+	TimeStamp     int64   `json:"timestamp"`
 }
 
 type DockerStatsDecoder struct {

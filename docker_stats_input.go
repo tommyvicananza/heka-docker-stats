@@ -2,7 +2,6 @@ package dockerstats
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 	"time"
 
@@ -15,12 +14,12 @@ import (
 type dockerStat struct {
 	CPUPercent float64
 	MemPercent float64
-	MemUsage   uint64
-	MemLimit   uint64
-	NetworkRx  uint64
-	NetworkTx  uint64
-	BlockRead  uint64
-	BlockWrite uint64
+	MemUsage   int64
+	MemLimit   int64
+	NetworkRx  int64
+	NetworkTx  int64
+	BlockRead  int64
+	BlockWrite int64
 }
 
 type DockerStatsInputConfig struct {
@@ -71,7 +70,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		var (
 			// test                        chan bool
 			//err                         error
-			previousCPU, previousSystem uint64
+			previousCPU, previousSystem int64
 			mstats                      *dockerStat
 			preCPUStats, stats          *docker.Stats
 		)
@@ -139,8 +138,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.AddField(cpuPercent)
 			memPercent, _ := message.NewField("MemoryPercent", float64(mstats.MemPercent), "")
 			pack.Message.AddField(memPercent)
-			fmt.Println(reflect.TypeOf(mstats.MemLimit))
-			memLimit, err := message.NewField("MemoryLimit", mstats.MemLimit, "")
+			memLimit, err := message.NewField("MemoryLimit", int64(mstats.MemLimit), "")
 			fmt.Println(err)
 			pack.Message.AddField(memLimit)
 			//memUsage, _ := message.NewField("MemoryUsage", uint64(mstats.MemUsage), "")
@@ -179,7 +177,7 @@ func init() {
 	})
 }
 
-func calculateCPUPercent(previousCPU, previousSystem uint64, stats *docker.Stats) float64 {
+func calculateCPUPercent(previousCPU, previousSystem int64, stats *docker.Stats) float64 {
 	var (
 		cpuPercent = 0.0
 		// calculate the change for the cpu usage of the container in between readings
@@ -194,7 +192,7 @@ func calculateCPUPercent(previousCPU, previousSystem uint64, stats *docker.Stats
 	return cpuPercent
 }
 
-func calculateBlockIO(stats *docker.Stats) (blkRead uint64, blkWrite uint64) {
+func calculateBlockIO(stats *docker.Stats) (blkRead int64, blkWrite int64) {
 	blkio := stats.BlkioStats
 	for _, bioEntry := range blkio.IOServiceBytesRecursive {
 		switch strings.ToLower(bioEntry.Op) {
