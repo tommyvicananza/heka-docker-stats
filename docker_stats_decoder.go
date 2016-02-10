@@ -39,17 +39,17 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	stats := StatsPayload{
-		Hostname:      pack.Message.FindFirstField("Hostname").getValue(),
-		ContainerName: pack.Message.FindFirstField("ContainerName").getValue(),
-		CPUPercent:    pack.Message.FindFirstField("CPUPercent").getValue(),
-		MemPercent:    pack.Message.FindFirstField("MemoryPercent").getValue(),
-		MemUsage:      pack.Message.FindFirstField("MemoryUsage").getValue(),
-		MemLimit:      pack.Message.FindFirstField("MemoryLimit").getValue(),
-		NetworkRx:     pack.Message.FindFirstField("NetInput").getValue(),
-		NetworkTx:     pack.Message.FindFirstField("NetOuput").getValue(),
-		BlockRead:     pack.Message.FindFirstField("BlockRead").getValue(),
-		BlockWrite:    pack.Message.FindFirstField("BlockWrite").getValue(),
-		TimeStamp:     pack.Message.FindFirstField("Timestamp").getValue(),
+		Hostname:      pack.Message.FindFirstField("Hostname").GetValue(),
+		ContainerName: pack.Message.FindFirstField("ContainerName").GetValue(),
+		CPUPercent:    pack.Message.FindFirstField("CPUPercent").GetValue(),
+		MemPercent:    pack.Message.FindFirstField("MemoryPercent").GetValue(),
+		MemUsage:      pack.Message.FindFirstField("MemoryUsage").GetValue(),
+		MemLimit:      pack.Message.FindFirstField("MemoryLimit").GetValue(),
+		NetworkRx:     pack.Message.FindFirstField("NetInput").GetValue(),
+		NetworkTx:     pack.Message.FindFirstField("NetOuput").GetValue(),
+		BlockRead:     pack.Message.FindFirstField("BlockRead").GetValue(),
+		BlockWrite:    pack.Message.FindFirstField("BlockWrite").GetValue(),
+		TimeStamp:     pack.Message.FindFirstField("Timestamp").GetValue(),
 	}
 
 	json, _ := json.Marshal(stats)
