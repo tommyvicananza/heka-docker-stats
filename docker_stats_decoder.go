@@ -53,7 +53,7 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 		TimeStamp:     932,
 	}
 	a := pack.Message.Hostname
-	fmt.Println(a)
+	fmt.Println(&a)
 	b, _ := pack.Message.GetFieldValue("ContainerName")
 	fmt.Println(b)
 	b, _ = pack.Message.GetFieldValue("CPUPercent")
@@ -64,13 +64,13 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	fmt.Println(b)
 	b, _ = pack.Message.GetFieldValue("MemoryLimit")
 	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("NetInput")
+	b, _ = pack.Message.GetFieldValue("NetworkInput")
 	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("NetOuput")
+	b, _ = pack.Message.GetFieldValue("NetworkOuput")
 	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("BlockRead")
+	b, _ = pack.Message.GetFieldValue("BlockInput")
 	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("BlockWrite")
+	b, _ = pack.Message.GetFieldValue("BlockOutput")
 	fmt.Println(b)
 	t := pack.Message.Timestamp
 	fmt.Println(t)
