@@ -39,6 +39,7 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 }
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
+	fmt.Println("decode")
 	stats := StatsPayload{
 		Hostname:      "hola",
 		ContainerName: "hola",
