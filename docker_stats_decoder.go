@@ -31,7 +31,6 @@ func (input *DockerStatsDecoder) Init(config interface{}) error {
 }
 
 func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*pipeline.PipelinePack, err error) {
-	fmt.Println("Decode mayusculas")
 	var buf bytes.Buffer
 	buf = input.decode(pack)
 	pack.Message.SetPayload(string(buf.Bytes()))
@@ -40,7 +39,6 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 }
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
-	fmt.Println("decode")
 	stats := StatsPayload{
 		Hostname:      "hola",
 		ContainerName: "hola",
@@ -76,6 +74,7 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	//fmt.Println(b)
 	//t := pack.Message.Timestamp
 	//fmt.Println(t)
+	fmt.Println(stats)
 	json, err := json.Marshal(stats)
 	if err != nil {
 		fmt.Println(err)
