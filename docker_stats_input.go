@@ -119,7 +119,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			}
 			pack = <-packSupply
 			pack.Message.SetUuid(uuid.NewRandom())
-			pack.Message.SetTimestamp(time.Now().UnixNano())
+			pack.Message.SetTimestamp(time.Now().Unix())
 			pack.Message.SetType("DockerStats")
 			pack.Message.SetHostname(hostname)
 
