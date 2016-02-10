@@ -2,6 +2,7 @@ package dockerstats
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"time"
 
@@ -138,6 +139,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.AddField(cpuPercent)
 			memPercent, _ := message.NewField("MemoryPercent", float64(mstats.MemPercent), "")
 			pack.Message.AddField(memPercent)
+			fmt.Println(reflect.TypeOf(mstats.MemLimit))
 			memLimit, err := message.NewField("MemoryLimit", mstats.MemLimit, "")
 			fmt.Println(err)
 			pack.Message.AddField(memLimit)
