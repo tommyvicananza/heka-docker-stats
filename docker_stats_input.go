@@ -95,26 +95,18 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 					}
 				}
 			}
-			fmt.Println(input.cacheHostnames[container.ID])
-
-			// go func() {
-			// 	test = make(chan bool)
 			opts := docker.StatsStaticOptions{ID: container.ID, Stream: false}
 			preCPUStats, _ = client.StatsStatic(opts)
 			if preCPUStats == nil {
-				fmt.Println("Es vacio")
 				continue
 			}
-			fmt.Println("Hecho precpu")
 			previousCPU = preCPUStats.CPUStats.CPUUsage.TotalUsage
 			previousSystem = preCPUStats.CPUStats.SystemCPUUsage
 
 			stats, _ = client.StatsStatic(opts)
 			if stats == nil {
-				fmt.Println("Es vacio")
 				continue
 			}
-			fmt.Println("Hecho cpu")
 			mstats = &dockerStat{}
 			mstats.CPUPercent = calculateCPUPercent(previousCPU, previousSystem, stats)
 			mstats.MemPercent = calculateMemPercent(stats)
@@ -161,8 +153,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 				mstats.BlockRead,
 				mstats.BlockWrite))
 			runner.Deliver(pack)
-			// test <- true
-			// }()
 		}
 	}
 	return nil
