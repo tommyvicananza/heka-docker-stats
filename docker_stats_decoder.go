@@ -74,11 +74,12 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	//fmt.Println(b)
 	//t := pack.Message.Timestamp
 	//fmt.Println(t)
-	fmt.Println(stats)
+
 	json, err := json.Marshal(stats)
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println(string(json))
 	return *bytes.NewBuffer(json)
 }
 
