@@ -139,7 +139,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			memPercent, _ := message.NewField("MemoryPercent", float64(mstats.MemPercent), "")
 			pack.Message.AddField(memPercent)
 			memLimit, _ := message.NewField("MemoryLimit", int64(mstats.MemLimit), "")
-			fmt.Println(err)
 			pack.Message.AddField(memLimit)
 			memUsage, _ := message.NewField("MemoryUsage", int64(mstats.MemUsage), "")
 			pack.Message.AddField(memUsage)
