@@ -77,7 +77,6 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 	json, err := json.Marshal(stats)
 	if err != nil {
 		fmt.Println(err)
-		return nil
 	}
 	return *bytes.NewBuffer(json)
 }
