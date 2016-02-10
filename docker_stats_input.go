@@ -14,12 +14,12 @@ import (
 type dockerStat struct {
 	CPUPercent float64
 	MemPercent float64
-	MemUsage   int64
-	MemLimit   int64
-	NetworkRx  int64
-	NetworkTx  int64
-	BlockRead  int64
-	BlockWrite int64
+	MemUsage   uint64
+	MemLimit   uint64
+	NetworkRx  uint64
+	NetworkTx  uint64
+	BlockRead  uint64
+	BlockWrite uint64
 }
 
 type DockerStatsInputConfig struct {
@@ -70,7 +70,7 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 		var (
 			// test                        chan bool
 			//err                         error
-			previousCPU, previousSystem int64
+			previousCPU, previousSystem uint64
 			mstats                      *dockerStat
 			preCPUStats, stats          *docker.Stats
 		)
@@ -177,7 +177,7 @@ func init() {
 	})
 }
 
-func calculateCPUPercent(previousCPU, previousSystem int64, stats *docker.Stats) float64 {
+func calculateCPUPercent(previousCPU, previousSystem uint64, stats *docker.Stats) float64 {
 	var (
 		cpuPercent = 0.0
 		// calculate the change for the cpu usage of the container in between readings
@@ -192,7 +192,7 @@ func calculateCPUPercent(previousCPU, previousSystem int64, stats *docker.Stats)
 	return cpuPercent
 }
 
-func calculateBlockIO(stats *docker.Stats) (blkRead int64, blkWrite int64) {
+func calculateBlockIO(stats *docker.Stats) (blkRead uint64, blkWrite uint64) {
 	blkio := stats.BlkioStats
 	for _, bioEntry := range blkio.IOServiceBytesRecursive {
 		switch strings.ToLower(bioEntry.Op) {
