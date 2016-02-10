@@ -131,7 +131,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			pack.Message.SetType("DockerStats")
 			pack.Message.SetHostname(hostname)
 
-			fmt.Println("asignaciones")
 			containerName, _ := message.NewField("ContainerName", string(strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1)), "")
 			pack.Message.AddField(containerName)
 			cpuPercent, _ := message.NewField("CPUPercent", float64(mstats.CPUPercent), "")
@@ -151,7 +150,6 @@ func (input *DockerStatsInput) Run(runner pipeline.InputRunner,
 			blockOutput, _ := message.NewField("BlockOutput", int64(mstats.BlockWrite), "")
 			pack.Message.AddField(blockOutput)
 
-			fmt.Println("setpayload")
 			pack.Message.SetPayload(fmt.Sprintf("container_name %s\ncpu %.2f\nmem_usage %d\nmem_limit %d\nmem %.2f\nnet_input %d\nnet_output %d\nblock_input %d\nblock_output %d",
 				strings.Replace(input.cacheHostnames[container.ID], "-", "_", -1),
 				mstats.CPUPercent,

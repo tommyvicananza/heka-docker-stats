@@ -39,40 +39,28 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 }
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
+	containerName, _ := pack.Message.GetFieldValue("ContainerName")
+	cpuPercent, _ = pack.Message.GetFieldValue("CPUPercent")
+	memoryPercent, _ = pack.Message.GetFieldValue("MemoryPercent")
+	memoryUsage, _ = pack.Message.GetFieldValue("MemoryUsage")
+	memoryLimit, _ = pack.Message.GetFieldValue("MemoryLimit")
+	networkInput, _ = pack.Message.GetFieldValue("NetworkInput")
+	networkOutput, _ = pack.Message.GetFieldValue("NetworkOutput")
+	blockInput, _ = pack.Message.GetFieldValue("BlockInput")
+	blockOutput, _ = pack.Message.GetFieldValue("BlockOutput")
 	stats := StatsPayload{
-		Hostname:      "hola",
-		ContainerName: "hola",
-		CPUPercent:    1.0,
-		MemPercent:    2.0,
-		MemUsage:      3,
-		MemLimit:      4,
-		NetworkRx:     5,
-		NetworkTx:     6,
-		BlockRead:     7,
-		BlockWrite:    8,
-		TimeStamp:     932,
+		Hostname:      *pack.Message.Hostname,
+		ContainerName: containerName,
+		CPUPercent:    cpuPercent,
+		MemPercent:    memoryPercent,
+		MemUsage:      memUsage,
+		MemLimit:      memLimit,
+		NetworkRx:     networkInput,
+		NetworkTx:     networkOutput,
+		BlockRead:     blockInput,
+		BlockWrite:    blockOutput,
+		TimeStamp:     *pack.Message.Timestamp,
 	}
-	fmt.Println(*pack.Message.Hostname)
-	b, _ := pack.Message.GetFieldValue("ContainerName")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("CPUPercent")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("MemoryPercent")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("MemoryUsage")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("MemoryLimit")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("NetworkInput")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("NetworkOutput")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("BlockInput")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("BlockOutput")
-	fmt.Println(b)
-	t := pack.Message.Timestamp
-	fmt.Println(t)
 
 	json, err := json.Marshal(stats)
 	if err != nil {
