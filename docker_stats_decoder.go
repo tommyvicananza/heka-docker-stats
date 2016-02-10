@@ -3,7 +3,6 @@ package dockerstats
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 
 	"github.com/mozilla-services/heka/pipeline"
 )
@@ -52,28 +51,28 @@ func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
 		BlockWrite:    8,
 		TimeStamp:     932,
 	}
-	a := pack.Message.Hostname
-	fmt.Println(a)
-	b, _ := pack.Message.GetFieldValue("ContainerName")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("CPUPercent")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("MemoryPercent")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("MemoryUsage")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("MemoryLimit")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("NetInput")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("NetOuput")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("BlockRead")
-	fmt.Println(b)
-	b, _ = pack.Message.GetFieldValue("BlockWrite")
-	fmt.Println(b)
-	t := pack.Message.Timestamp
-	fmt.Println(t)
+	//a := pack.Message.Hostname
+	//fmt.Println(a)
+	//b, _ := pack.Message.GetFieldValue("ContainerName")
+	//fmt.Println(b)
+	//b, _ = pack.Message.GetFieldValue("CPUPercent")
+	//fmt.Println(b)
+	//b, _ = pack.Message.GetFieldValue("MemoryPercent")
+	//fmt.Println(b)
+	//b, _ = pack.Message.GetFieldValue("MemoryUsage")
+	//fmt.Println(b)
+	//b, _ = pack.Message.GetFieldValue("MemoryLimit")
+	//fmt.Println(b)
+	//b, _ = pack.Message.GetFieldValue("NetInput")
+	//fmt.Println(b)
+	//b, _ = pack.Message.GetFieldValue("NetOuput")
+	//fmt.Println(b)
+	//b, _ = pack.Message.GetFieldValue("BlockRead")
+	//fmt.Println(b)
+	//b, _ = pack.Message.GetFieldValue("BlockWrite")
+	//fmt.Println(b)
+	//t := pack.Message.Timestamp
+	//fmt.Println(t)
 	json, _ := json.Marshal(stats)
 	return *bytes.NewBuffer(json)
 }
