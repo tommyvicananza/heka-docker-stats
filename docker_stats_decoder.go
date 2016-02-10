@@ -39,22 +39,19 @@ func (input *DockerStatsDecoder) Decode(pack *pipeline.PipelinePack) (packs []*p
 }
 
 func (*DockerStatsDecoder) decode(pack *pipeline.PipelinePack) bytes.Buffer {
-	var stats = make(map[string]interface{})
-	// stats := StatsPayload{
-	// 	Hostname:      "hola",
-	// 	ContainerName: "hola",
-	// 	CPUPercent:    1.0,
-	// 	MemPercent:    2.0,
-	// 	MemUsage:      3,
-	// 	MemLimit:      4,
-	// 	NetworkRx:     5,
-	// 	NetworkTx:     6,
-	// 	BlockRead:     7,
-	// 	BlockWrite:    8,
-	// 	TimeStamp:     932,
-	// }
-	stats["hostname"] = "hola"
-	stats["containerName"] = "que"
+	stats := StatsPayload{
+		Hostname:      "hola",
+		ContainerName: "hola",
+		CPUPercent:    1.0,
+		MemPercent:    2.0,
+		MemUsage:      3,
+		MemLimit:      4,
+		NetworkRx:     5,
+		NetworkTx:     6,
+		BlockRead:     7,
+		BlockWrite:    8,
+		TimeStamp:     932,
+	}
 	//a := pack.Message.Hostname
 	//fmt.Println(a)
 	//b, _ := pack.Message.GetFieldValue("ContainerName")
